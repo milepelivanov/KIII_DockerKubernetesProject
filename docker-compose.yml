@@ -1,0 +1,35 @@
+version: '3.5'
+
+networks:
+  backend:
+    name: backend
+
+volumes:
+  data-postgre:
+
+services:
+  postgresql:
+    image: postgres:16.2-alpine
+    ports:
+      - 5432:5432
+    volumes:
+      - data-postgre:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_DB=yumrushDB
+    networks:
+      - backend
+
+
+  yumrush:
+    image: milepelivanov02/yumrush:1.0
+    container_name: yumrush-food-delivery-app
+    ports:
+      - 8080:8080
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://host.docker.internal:5432/yumrushDB
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=postgres
+    networks:
+      - backend

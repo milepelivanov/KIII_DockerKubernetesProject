@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css"
+      integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+<link rel="icon" href="favicon.png">
+<head>
+    <meta charset="UTF-8">
+    <title>Home</title>
+    <style>
+        img {
+            max-width: 100%;
+            height: auto;
+        }
+        .img-fluid{
+            width: 100%;
+            display: block;
+            justify-content: center;
+            align-items: flex-start;
+        }
+    </style>
+</head>
+<body>
+<nav class="navbar navbar-expand-lg navbar-dark" style="height: 55px; background-color: #be6d08">
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav mr-auto" >
+            <!--<li class="nav-item"><a th:href="@{/home}"><img src="../images/logo.jpg" height="60px" width="121px"></a></li>-->
+            <li class="nav-item"><a style="color: white; font-weight: bolder; text-decoration: none; margin-right: 20px" th:href="@{/home}">YumRush</a></li>
+            <li class="nav-item"><a style="color: white; font-weight: bolder; text-decoration: none; margin-right: 20px" th:href="@{/salePlaces}" sec:authorize="hasRole('ROLE_CONSUMER')">Продажни места</a></li>
+            <li class="nav-item"><a style="color: white; font-weight: bolder; text-decoration: none; margin-right: 20px" th:href="@{/checkOrderStatus}" sec:authorize="hasRole('ROLE_CONSUMER')">Статус нарачки</a></li>
+            <li class="nav-item"><a style="color: white; font-weight: bolder; text-decoration: none; margin-right: 20px" th:href="@{/salePlace/Orders}" sec:authorize="hasRole('ROLE_SALEPLACEEMPLOYEE')">Нарачки</a></li>
+            <li class="nav-item"><a style="color: white; font-weight: bolder; text-decoration: none; margin-right: 20px" th:href="@{/deliveryOrders}" sec:authorize="hasRole('ROLE_DELIVER')">Превземете нарачка</a></li>
+            <li class="nav-item"><a style="color: white; font-weight: bolder; text-decoration: none; margin-right: 20px" th:href="@{/showOrderDeliverer}" sec:authorize="hasRole('ROLE_DELIVER')">Ваши нарачки</a></li>
+
+            <li class="nav-item"><a style="color: white; font-weight: bolder; text-decoration: none; margin-right: 20px" th:href="@{/reports/bestPacketsEachSalePlace}" sec:authorize="hasRole('ROLE_ADMIN')">Најдобри пакети</a></li>
+            <li class="nav-item"><a style="color: white; font-weight: bolder; text-decoration: none; margin-right: 20px" th:href="@{/reports/mostLoyalCustomerForEachPlace}" sec:authorize="hasRole('ROLE_ADMIN')">Најверен потрошувач</a></li>
+            <li class="nav-item"><a style="color: white; font-weight: bolder; text-decoration: none; margin-right: 20px" th:href="@{/reports/franchizeEarningsBySalePlace}" sec:authorize="hasRole('ROLE_ADMIN')">Промет франшиза</a></li>
+            <li class="nav-item"><a style="color: white; font-weight: bolder; text-decoration: none; margin-right: 20px" th:href="@{/reports/DeliverNumberOfOrdersDeliveredBySalePlace}" sec:authorize="hasRole('ROLE_ADMIN')">Доставувач број достави</a></li>
+            <li class="nav-item"><a style="color: white; font-weight: bolder; text-decoration: none; margin-right: 20px" th:href="@{/reports/TotalCouponsByCustomer}" sec:authorize="hasRole('ROLE_ADMIN')">Купони</a></li>
+            <a href="/logout" style="color: #01ea01;position: absolute;margin-left: 90%;" sec:authorize="isAuthenticated()">Log out</a>
+            <a href="/login" style="color: #01ea01;position: absolute;margin-left: 90%;" sec:authorize="!isAuthenticated()">Log in</a>
+
+        </ul>
+    </div>
+
+</nav>
+
+
+
+    <img class ='img-fluid' th:src = "@{/images/YumRush.jpg}" />
+
+
+</body>
+</html>

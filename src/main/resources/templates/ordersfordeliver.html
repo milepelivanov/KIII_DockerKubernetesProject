@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="icon" href="favicon.png">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css"
+          integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+</head>
+<body>
+
+<nav class="navbar navbar-expand-lg navbar-dark" style="height: 55px; background-color: #be6d08">
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav mr-auto">
+            <li class="nav-item"><a style="color: white; font-weight: bolder; text-decoration: none;"
+                                    th:href="@{/home}">Врати се назад</a></li>
+        </ul>
+    </div>
+</nav>
+<h1 class="display-4" style="margin-left: 5%; text-align: center; font-weight: bold; margin-top: 3% ;font-size: 33px;">Ваши достави</h1>
+    <div th:each="order : ${orders}" style="width: 90%; margin-left: auto; margin-right: auto; margin-top:10px;" class="border">
+        <table class="table" >
+            <tr><th scope="col">Адреса</th><th scope="col">Број</th><th scope="col">Цена</th><th scope="col">Продажно место</th><th scope="col">Начин на плаќање</th><th scope="col"></th></tr>
+
+            <tr>
+                <td th:text="${order.getConsumer().getLocation().getAddress()}"></td>
+                <td th:text="${order.getConsumer().getLocation().getNumber()}"></td>
+                <td th:text="${costs.get(orderStat.index)}"></td>
+                <td th:text="${order.getSalePlace().getSalePlaceName()}"></td>
+                <td th:text="${order.getTypeOfPayment()}"></td>
+                <td><a class="btn btn-success text-white " th:href="@{'/orderPayment/{id}' (id = ${order.getOrderId()})}">Потврдете дека е платена</a></td>
+            </tr>
+        </table>
+    </div>
+
+
+</body>
+</html>

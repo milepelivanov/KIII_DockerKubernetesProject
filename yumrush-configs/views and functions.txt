@@ -1,0 +1,201 @@
+create view najdobri_paketi_za_sekoe_prodazno_mesto as select pr.ime, pa.paket_id, string_agg(distinct h.ime_hra, ', ') as se_sostoi_od, sum(nip.kolicina) vkupno_prodadeni,
+(
+        select k.ime 
+        from korisnik k join vrabotenpd v on k.korisnik_id = v.korisnik_id 
+        join paket paa on paa.vraboten_id = v.korisnik_id 
+        where paa.paket_id = pa.paket_id 
+) as ime_vraboten
+from prodazhnomesto pr join prodazhnomesto_nudi_paket pnp on pr.id_mesto = pnp.id_mesto 
+join paket pa on pa.paket_id = pnp.paket_id 
+join paket_sodrzi_hrana psh  on psh.paket_id = pa.paket_id 
+join hrana h on h.id_stavka = psh.id_stavka
+join naracka_ima_paket nip on nip.paket_id = pa.paket_id 
+group by pr.id_mesto, pa.paket_id
+having sum(nip.kolicina)
+= (
+select sum(nipp.kolicina) 
+from prodazhnomesto prr join prodazhnomesto_nudi_paket pnpp on prr.id_mesto = pnpp.id_mesto 
+join paket paa on paa.paket_id = pnpp.paket_id 
+join paket_sodrzi_hrana pshh  on pshh.paket_id = paa.paket_id 
+join hrana hh on hh.id_stavka = pshh.id_stavka
+join naracka_ima_paket nipp on nipp.paket_id = paa.paket_id 
+group by prr.id_mesto, paa.paket_id
+order by sum(nipp.kolicina) 
+limit 1
+);
+
+create view najveren_potrosuvac_za_sekoe_prodazno_mesto as select k.ime as  ime_potrosuvac, pr.ime as ime_mesto, l.adresa as adresa_potrosuvac, l.broj as broj_adresa_potrosuvac,  count(distinct n.naracka_id) as broj_naracka,
+extract(year from n.datum_naracka) as godina
+
+from korisnik k join potrosuvac p on k.korisnik_id = p.korisnik_id 
+join naracka n on n.potrosuvac_id = p.korisnik_id 
+right join prodazhnomesto pr on pr.id_mesto = n.id_mesto 
+left join lokacija l on l.lokacija_id = p.lokacija_id 
+group by k.korisnik_id, pr.id_mesto, l.adresa, l.broj, extract(year from n.datum_naracka) 
+having extract(year from n.datum_naracka) = extract(year from now()) and
+ count(distinct n.naracka_id)
+= 
+                (select  count(distinct nn.naracka_id)  
+                from korisnik kk join potrosuvac pp on kk.korisnik_id = pp.korisnik_id 
+                join naracka nn on nn.potrosuvac_id = pp.korisnik_id 
+                right join prodazhnomesto prr on prr.id_mesto = nn.id_mesto 
+                left join lokacija ll on ll.lokacija_id = pp.lokacija_id 
+                where pr.id_mesto = prr.id_mesto 
+                group by kk.korisnik_id, prr.id_mesto, ll.adresa, ll.broj, extract(year from nn.datum_naracka) 
+                having extract( year from nn.datum_naracka) = extract(year from now())
+                order by count(distinct nn.naracka_id) desc
+                limit 1
+                
+                ); 
+				
+				create view dostavuvac_dostavi_za_sekoe_prod_mesto as 
+    select distinct 
+        k.ime,
+        p.ime as ime_mesto,
+        p.id_mesto,
+        count(distinct n2.naracka_id) as broj_naracki,
+        sum(n.iznos) as vkupna_suma 
+    from 
+        korisnik k  
+    join 
+        dostavuvac d on k.korisnik_id = d.korisnik_id
+    left join 
+        naplata n on n.dostavuvac_id = d.korisnik_id 
+    left join 
+        naracka n2 on n2.naplata_id = n.naplata_id 
+    left join 
+        prodazhnomesto p on p.id_mesto = n2.id_mesto 
+    group by 
+        k.korisnik_id, 
+        p.id_mesto,
+        p.ime
+    order by 
+        sum(n.iznos) desc;
+		
+		
+		create view potrosuvaci_vkupen_iznos_kuponi as 
+    select 
+        k.korisnik_id,
+        k.ime, 
+        sum(ku.iznos_kupon) as vkupen_iznos
+    from 
+        korisnik k 
+    join 
+        potrosuvac p on p.korisnik_id = k.korisnik_id 
+    join 
+        kupon ku on ku.potrosuvac_id = p.korisnik_id 
+    group by 
+        k.korisnik_id, 
+        k.ime;
+		
+		
+		
+		create view franshiza_promet_mesta_tri_meseci as select distinct f.ime as ime_franshiza, p.ime as ime_prodaznomesto, sum(n2.iznos) as vkupen_promet
+from franshiza f join prodazhnomesto p on f.franshiza_id = p.franshiza_id 
+join naracka n on n.id_mesto  = p.id_mesto 
+join naplata n2 on n2.naplata_id = n.naplata_id 
+where n2.datum_naplata between now() - interval '3 months' and now()
+group by f.franshiza_id, p.id_mesto ;
+
+
+
+create function najprodavano_za_dadeni_meseci(month_1 int, month_2 int, month_3 int)
+returns table(
+        id_stavka int,
+        ime_hra varchar(200),
+        id_mesto int,
+        ime_stavka varchar(200),
+        vkupno_prodadeni bigint
+)
+language plpgsql
+as $$
+begin   
+        return query select h.id_stavka, h.ime_hra,pr.id_mesto, pr.ime as ime_stavka, sum(nsh.kolicina) as vkupno_prodadeni
+        from naracka n join naracka_sodrzi_hrana nsh on n.naracka_id = nsh.naracka_id 
+        join hrana h on nsh.id_stavka = h.id_stavka 
+        join prodazhnomesto pr on pr.id_mesto = n.id_mesto 
+        where (lower(n.status) like '%zavrsena%' or lower(n.status) like '%завршена%')
+        and (extract (month from n.datum_naracka) in (month_1,month_2,month_3) and extract(year from now()) = extract (year from n.datum_naracka) )
+        group by h.id_stavka, pr.id_mesto,h.ime_hra, pr.ime 
+        having sum(nsh.kolicina) = 
+ (
+                select  sum(nshh.kolicina)
+                from naracka nn join naracka_sodrzi_hrana nshh on nn.naracka_id = nshh.naracka_id 
+                join hrana hh on nshh.id_stavka = hh.id_stavka 
+                join prodazhnomesto prr on prr.id_mesto = nn.id_mesto 
+                where (lower(nn.status) like '%zavrsena%' or lower(nn.status) like '%завршена%')
+                and (extract (month from nn.datum_naracka) in (month_1,month_2,month_3) and extract(year from now()) = extract (year from nn.datum_naracka) )
+                group by hh.id_stavka, prr.id_mesto,hh.ime_hra, prr.ime 
+                having prr.id_mesto = pr.id_mesto
+                order by sum(nshh.kolicina) desc 
+                limit 1
+);
+end
+$$;
+
+
+create view kolicina_pod_dadena_gradnica_za_prod_mesto as select ime_hra,ime,sum(kolicina) 
+from hrana h join zaliha z on h.id_stavka = z.id_stavka 
+join prodazhnomesto p on p.id_mesto = h.id_mesto 
+group by ime_hra,ime
+having sum(kolicina) < 10;
+
+
+
+create  function calculate_cost_of_order_food(order_id int)
+returns table(
+        vkupno_hrana int
+)
+language plpgsql
+as 
+$$
+begin 
+        return query select kolicina * iznos as vkupno
+        from naracka n join naracka_sodrzi_hrana nih on n.naracka_id = nih.naracka_id
+        join hrana h on h.id_stavka = nih.id_stavka 
+        join cena c on (c.id_stavka = h.id_stavka and vazi_do is null)
+        or (c.id_stavka = h.id_stavka and vazi_do > now())
+        where n.naracka_id = order_id;
+        
+        
+        
+end 
+$$;
+
+
+create function calculate_cost_of_order_packets(order_id int)
+returns table (
+        vkupno_paketi bigint
+)
+language plpgsql
+as 
+$$
+begin
+        return query select sum(iznos) * nip.kolicina  as vkupno_paketi
+        from naracka n join naracka_ima_paket nip on n.naracka_id = nip.naracka_id 
+        join paket pa on pa.paket_id  = nip.paket_id 
+        join paket_sodrzi_hrana psh on psh.paket_id = pa.paket_id 
+        join hrana h on h.id_stavka = psh.id_stavka 
+        join cena c on (c.id_stavka = h.id_stavka and vazi_do is null)
+                or (c.id_stavka = h.id_stavka and vazi_do > now())
+        where n.naracka_id = order_id
+        group by n.naracka_id, pa.paket_id, nip.kolicina ; 
+end
+$$;
+
+
+create function calculate_order_cost(order_id int)
+returns bigint
+language plpgsql
+as 
+$$
+declare 
+vkupno_cena_hrana bigint;
+vkupno_cena_paketi bigint;
+begin
+        select sum(vkupno_hrana) into vkupno_cena_hrana from calculate_cost_of_order_food(order_id);
+        select sum(vkupno_paketi) into vkupno_cena_paketi from calculate_cost_of_order_packets(order_id);
+        return vkupno_cena_hrana + vkupno_cena_paketi;
+        
+end
+$$;
