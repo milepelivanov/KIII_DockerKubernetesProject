@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="icon" href="favicon.png">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css"
+          integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <style>
+        body {
+            background-color: #f8f9fa; /* Mild green background */
+        }
+        h1.display-4 {
+            text-align: center; /* Center align h1 */
+            margin: 20px auto; /* Center the h1 and add top and bottom margin */
+            color: black; /* White font color */
+            padding: 10px; /* Add padding */
+            font-weight: bold; /* Make text bold */
+            display: block; /* Take up only the necessary width */
+            font-size: 33px;
+        }
+        .table {
+            margin: 0 auto; /* Center the table */
+            width: 50%; /* Set a width for the table */
+
+        }
+        .table tbody tr {
+            background-color: #f1f1f1; /* Light gray background for table rows */
+            text-align: center; /* Center align table cells */
+            vertical-align: middle; /* Center vertically */
+            margin-bottom: 10px;
+        }
+        .table tbody tr td {
+            padding: 15px; /* Add padding to table cells */
+        }
+        .table tbody tr:not(:last-child) {
+            margin-bottom: 10px; /* Add space between table rows */
+        }
+    </style>
+</head>
+<body>
+<nav class="navbar navbar-expand-lg navbar-dark" style="height: 55px; background-color: #be6d08">
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav mr-auto">
+            <li class="nav-item"><a style="color: white; font-weight: bolder; text-decoration: none;"
+                                    th:href="@{/home}">Врати се назад</a></li>
+        </ul>
+    </div>
+</nav>
+
+<h1 class="display-4">Продажни места</h1>
+<br/>
+<table class="table">
+    <tbody>
+    <tr th:each="salePlace : ${salePlaces}">
+        <td>
+            <a th:href="@{'/salePlace/{id}'(id = ${salePlace.getSalePalceId()})}"
+               th:text="${salePlace.getSalePlaceName()}"
+               style="font-weight: bolder; text-decoration: none; text-transform: uppercase; color:black; padding: 10px"></a>
+        </td>
+    </tr>
+    </tbody>
+</table>
+
+</body>
+</html>
