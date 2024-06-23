@@ -14,6 +14,8 @@ services:
       - 5432:5432
     volumes:
       - data-postgre:/var/lib/postgresql/data
+      - ./yumrush-configs/kreiranje.sql:/docker-entrypoint-initdb.d/kreiranje.sql
+      - ./yumrush-configs/polnenje.sql:/docker-entrypoint-initdb.d/polnenje.sql
     environment:
       - POSTGRES_PASSWORD=postgres
       - POSTGRES_USER=postgres
@@ -21,14 +23,13 @@ services:
     networks:
       - backend
 
-
   yumrush:
     image: milepelivanov02/yumrush:1.0
     container_name: yumrush-food-delivery-app
     ports:
       - 8080:8080
     environment:
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://host.docker.internal:5432/yumrushDB
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgresql:5432/yumrushDB
       - SPRING_DATASOURCE_USERNAME=postgres
       - SPRING_DATASOURCE_PASSWORD=postgres
     networks:

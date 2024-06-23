@@ -1,5 +1,5 @@
 
-drop table namirnica_pripagja_kategorija;
+/*drop table namirnica_pripagja_kategorija;
 drop table namirnica_e_dodatok_hrana;
 drop table hrana_pripagja_kategorija;
 drop table naracka_ima_paket;
@@ -26,7 +26,7 @@ drop table kategorija;
 drop table franshiza;
 drop table lokacija;
 
-
+*/
 create table lokacija(
 	lokacija_id serial,
 	adresa varchar(100) not null,
