@@ -24,7 +24,7 @@ services:
       - backend
 
   yumrush:
-    image: milepelivanov02/yumrush:1.0
+    image: milepelivanov02/yumrush:latest
     container_name: yumrush-food-delivery-app
     ports:
       - 8080:8080
