@@ -14,8 +14,6 @@ services:
       - 5432:5432
     volumes:
       - data-postgre:/var/lib/postgresql/data
-      - ./yumrush-configs/kreiranje.sql:/docker-entrypoint-initdb.d/kreiranje.sql
-      - ./yumrush-configs/polnenje.sql:/docker-entrypoint-initdb.d/polnenje.sql
     environment:
       - POSTGRES_PASSWORD=postgres
       - POSTGRES_USER=postgres
