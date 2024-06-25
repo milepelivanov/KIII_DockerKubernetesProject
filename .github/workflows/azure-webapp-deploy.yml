@@ -3,29 +3,20 @@ name: Azure Web App Deployment
 on:
   push:
     branches:
-      - main 
+      - main  # Change this to your branch name if different
 
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
-    
+
     steps:
     - name: Checkout repository
       uses: actions/checkout@v2
       
-    - name: Log into Azure CLI
-      uses: azure/login@v1
-      with:
-        creds: ${{ secrets.AZURE_CREDENTIALS }}
-        
-    - name: Upload Docker Compose file to Azure Web App
+    - name: Build and push docker images
       run: |
-        az webapp config container set --name ${{ secrets.AZURE_WEBAPP_NAME }} \
-          --resource-group ${{ secrets.AZURE_RG }} \
-          --multicontainer-config-type compose \
-          --multicontainer-config-file docker-compose.yml
+        docker-compose build
+        docker-compose push
 
-    - name: Restart Azure App Service
-      run: |
-        az webapp restart --name ${{ secrets.AZURE_WEBAPP_NAME }} --resource-group ${{ secrets.AZURE_RG }}
-        #TEST
+    - name: Configure Azure Web App Deployment Center
+      run: az webapp deployment container config --name fooddeliveryapp --resource-group fooddeliveryresource --multicontainer-config-type compose --multicontainer-config-file docker-compose.yml
