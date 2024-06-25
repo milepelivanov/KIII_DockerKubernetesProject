@@ -21,15 +21,11 @@ jobs:
         docker-compose push
 
     - name: Deploy to Azure Web App
-      run: az webapp config container set \
-           --name fooddeliveryapp \
-           --resource-group fooddeliveryresource \
-           --docker-custom-image-name milepelivanov02/yumrush:latest \
-           --docker-registry-server-url https://index.docker.io \
-           --enable-app-service-storage false \
-           --multicontainer-config-type compose \
-           --multicontainer-config-file docker-compose.yml
-
-    # Optional: Trigger a restart to apply changes (if needed)
-    - name: Restart Azure Web App
-      run: az webapp restart --name fooddeliveryapp --resource-group fooddeliveryresource
+      run: |
+        az webapp config appsettings set \
+          --name fooddeliveryapp \
+          --resource-group fooddeliveryresource \
+          --settings DOCKER_CUSTOM_IMAGE_NAME=milepelivanov02/yumrush:latest \
+                     DOCKER_REGISTRY_SERVER_URL=https://index.docker.io \
+                     DOCKER_REGISTRY_SERVER_USERNAME=milepelivanov02 \
+                     DOCKER_REGISTRY_SERVER_PASSWORD=tosomalerot420
