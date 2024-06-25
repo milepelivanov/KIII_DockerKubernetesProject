@@ -13,10 +13,13 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v2
       
-    - name: Build and push docker images
+    - name: Upload Docker Compose file to Azure Web App
       run: |
-        docker-compose build
-        docker-compose push
+        az webapp config container set --name ${{ secrets.AZURE_WEBAPP_NAME }} \
+          --resource-group ${{ secrets.AZURE_RG }} \
+          --multicontainer-config-type compose \
+          --multicontainer-config-file docker-compose.yml
 
-    - name: Configure Azure Web App Deployment Center
-      run: az webapp deployment container config --name fooddeliveryapp --resource-group fooddeliveryresource --multicontainer-config-type compose --multicontainer-config-file docker-compose.yml
+    - name: Restart Azure App Service
+      run: |
+        az webapp restart --name ${{ secrets.AZURE_WEBAPP_NAME }} --resource-group ${{ secrets.AZURE_RG }}
