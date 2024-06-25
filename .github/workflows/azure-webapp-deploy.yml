@@ -28,3 +28,4 @@ jobs:
     - name: Restart Azure App Service
       run: |
         az webapp restart --name ${{ secrets.AZURE_WEBAPP_NAME }} --resource-group ${{ secrets.AZURE_RG }}
+        #TEST
