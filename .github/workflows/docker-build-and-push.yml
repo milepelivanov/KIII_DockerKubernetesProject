@@ -24,8 +24,4 @@ jobs:
 
       - name: Push Docker image
         run: |
-          docker push jovan141/productapi:latest
-
-      - name: Push Docker image
-        run: |
           docker push milepelivanov02/yumrush:latest
