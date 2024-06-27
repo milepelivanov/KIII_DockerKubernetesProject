@@ -1,4 +1,4 @@
-FROM openjdk:17-jdk
+FROM maven:latest
 LABEL author="mile.pelivanov"
 
 WORKDIR /app
