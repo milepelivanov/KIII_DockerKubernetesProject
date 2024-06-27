@@ -22,7 +22,8 @@ jobs:
           password: ${{ secrets.DOCKERHUB_TOKEN }}
           
       - name: Build and push
-        uses: docker/build-push-action@v6
-        with:
-          push: true
-          tags: milepelivanov02/yumrush:latest
+        run: |
+          docker buildx create --use
+          docker buildx build --platform linux/amd64,linux/arm64 \
+          -t milepelivanov02/yumrush:latest \
+          --push .
