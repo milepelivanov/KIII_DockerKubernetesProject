@@ -3,7 +3,7 @@ name: Backend Docker Build and Push
 on:
   push:
     paths:
-      - '/**' 
+      - '' 
 jobs:
   docker:
     runs-on: ubuntu-latest
@@ -21,8 +21,8 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
           
-      - name: Build Docker image
-        run: docker build -t milepelivanov02/yumrush:latest -f Dockerfile .
-
-      - name: Push Docker image
-        run: docker push milepelivanov02/yumrush:latest
+      - name: Build and push
+        uses: docker/build-push-action@v6
+        with:
+          push: true
+          tags: milepelivanov02/yumrush:latest
