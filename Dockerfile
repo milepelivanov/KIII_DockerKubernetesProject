@@ -12,4 +12,4 @@ COPY target/fooddeliverysystem-0.0.1-SNAPSHOT.jar /app/fooddeliverysystem-0.0.1-
 
 EXPOSE 8080
 
-CMD ["java", "-jar", "/app/fooddeliverysystem-0.0.1-SNAPSHOT.jar"]
+CMD ["mvn", "-jar", "/app/fooddeliverysystem-0.0.1-SNAPSHOT.jar"]
