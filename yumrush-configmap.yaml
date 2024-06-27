@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: yumrush-configmap
+  name: yumrush-configmap 
 data:
   SPRING_DATASOURCE_URL: "jdbc:postgresql://postgresql:5432/yumrushDB"
   SPRING_DATASOURCE_USERNAME: "postgres"
