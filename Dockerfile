@@ -1,6 +1,6 @@
 FROM maven:latest as build
 
-LABEL author="mile.pelivanov"
+LABEL author="mile.pelivanov" 
 
 WORKDIR /app
 
