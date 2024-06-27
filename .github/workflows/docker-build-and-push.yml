@@ -1,10 +1,7 @@
-name: Backend Docker Build and Push
-
 on:
   push:
-    paths:
-      - '/**' 
-
+    branches:
+      - 'main'
 jobs:
   build:
     runs-on: ubuntu-latest
