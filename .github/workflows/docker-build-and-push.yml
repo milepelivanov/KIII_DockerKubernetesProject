@@ -20,7 +20,7 @@ jobs:
           password: ${{ secrets.DOCKERHUB_TOKEN }}
       - name: Build Docker image
         run: |
-          cd .
+          cd /
           docker build -t milepelivanov02/yumrush:latest -f Dockerfile .
 
       - name: Push Docker image
